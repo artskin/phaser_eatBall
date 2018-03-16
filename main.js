@@ -31,32 +31,36 @@ onload = function () {
 
     //游戏开始画面
     var startState = function (game) {
-        var bmd,colors,rectangle,ball,getColor,innerCircle,outerCircle,rgb,button;
+        var bmd,colors,rectangle,ball,getColor,innerCircle,outerCircle,rgb,button,title;
         var i = 0;
         var p =null;
 
         this.preload =function(){
-            game.load.spritesheet('button', './assets/button_sprite_sheet.png', 210, 0);
+            game.load.spritesheet('button', './assets/button_sprite_sheet.png', 361, 124);
+            game.load.spritesheet('title', './assets/title.png', 700, 0);
         };
         this.create = function(){
             console.log("开始画面");
             //游戏名称
-            var style = {font:fontSize+"px",fill:"#fff"};
-            var gameTitle = game.add.text(0,game.height/5,'大鱼吃小鱼',style);
+            title = game.add.sprite(game.width/5+28,game.world.height/5-50,'title');
+            title.scale.setTo(0.3*DPR);
+
+            var style = {font:fontSize/2+"px",fill:"#394e76"};
+            var gameTitle = game.add.text(0,game.height-100,'小提示：吃掉比你小的球',style);
             gameTitle.x = (game.width - gameTitle.width)/2;
             gameTitle.alpha =1;
 
             //启动动画
             //var circle = new ShapeBall(colorObj.color2,colorObj.color1,size);
-            var circle1 = new ShapeBall("#8ED6FF","#003BA2",80);
-            var circle2 = new ShapeBall("#94ff6f","#2aa200",30);
+            var circle1 = new ShapeBall("#8ED6FF","#003BA2",60*DPR);
+            var circle2 = new ShapeBall("#94ff6f","#2aa200",20*DPR);
 
-            player = game.add.sprite(game.width/2+50,game.height/2,circle2);
-            ball = game.add.sprite(game.width/2 -110,game.height/4+100,circle1);
+            player = game.add.sprite(game.width/2+40*DPR,game.height/2,circle2);
+            ball = game.add.sprite(game.width/2 -80*DPR,game.height/4+100,circle1);
 
-            game.add.tween(ball,player).to(
+            game.add.tween(ball).to(
                 {
-                    y: game.height / 2 - 50,
+                    y: game.height / 2 - 50*DPR,
                     radius: 1
                 },
                 2000,
@@ -66,7 +70,7 @@ onload = function () {
             );
 
             //开始按钮
-            button = game.add.button(game.world.centerX - 95, game.height*0.75, 'button', actionOnClick, this, 2, 1, 0);
+            button = game.add.button(game.world.centerX - 172, game.height*0.72, 'button', actionOnClick, this, 2, 1, 0);
             function actionOnClick () {
                 game.state.start('main');
             }
@@ -87,8 +91,8 @@ onload = function () {
         this.addBall = function () {
             var colorObj = new RandomColor();
             var size = Math.floor(Math.random()*10 +1) * 5*DPR;
-            if(size > 89){
-                size = size -80;
+            if(size > 99){
+                size = size -70;
             }
 
             var circle = new ShapeBall(colorObj.color2,colorObj.color1,size);
@@ -110,7 +114,7 @@ onload = function () {
             sBall.body.setCircle(size/2);
             sBall.body.bounce.set(1);
             sBall.body.gravity.y = size/4;
-            sBall.body.velocity.set((130 - size/2)*2);
+            sBall.body.velocity.set((140 - size/2)*2);
             //console.log(size,);
             return ballNum = enemy.children.length
 
@@ -128,25 +132,46 @@ onload = function () {
             for(var c=0;c<4;c++) {
                 this.addBall();
             }
-            console.log(this.addBall());
+            //console.log(this.addBall());
 
             //玩家设置
             var Shape = new ShapeBall("#ff5757","#aa0101",11*DPR);
+
             //
             player = game.add.sprite(game.width/2 -10,game.height/2-10,Shape);
+            console.log(11*DPR,player.width);
 
             //拖动设置
             player.inputEnabled = true; //sprite to input
             player.input.enableDrag(true); //input set drag
             //player.body.immovable = true;
             //player.body.collideWorldBounds = true;
+            // var mX,mY;
+            // this.game.input.touch.onTouchStart = function (e) {
+            //
+            //     mX = e.targetTouches[0].clientX*DPR -player.x;
+            //     mY = e.targetTouches[0].clientY*DPR -player.y;
+            //
+            //     console.log(
+            //         "player.x:"+player.x,
+            //         "player.y:"+player.y,
+            //         "mouseX:"+e.targetTouches[0].clientX*DPR,
+            //         "mouseY:"+e.targetTouches[0].clientY*DPR,
+            //         mX,
+            //         mY);
+            // };
+            // this.game.input.touch.onTouchMove = function (e) {
+            //
+            //     player.x = e.targetTouches[0].clientX + mX;
+            //     player.y = e.targetTouches[0].clientX + mY;
+            // };
 
             game.physics.arcade.enable([enemy,player], Phaser.Physics.ARCADE);
 
             //统计得分
             scoreText = game.add.text(24,24,'分数：0', { fontSize: '48px', fill: '#fff' });
 
-            game.time.events.loop(1000, this.addBall, this);
+            game.time.events.loop(10000, this.addBall, this);
 
         };
 
@@ -155,13 +180,21 @@ onload = function () {
             game.physics.arcade.overlap(enemy,player,collectStar,null,this);
         };
         this.render = function(){
-
+            //game.debug.pointer(game.input.mousePointer);
         };
         function collectStar(player,sBall) {
+            console.log(player.width,sBall.width);
             if(player.width>sBall.width){
                 sBall.kill();
-                player.width+=6;
-                player.height+=6;
+                if(player.width <82){
+                    player.width+=6;
+                    player.height+=6;
+                }else if(player.width < 120){
+                    player.width+=4;
+                    player.height+=4;
+                }else{
+
+                }
                 score +=10;
                 scoreText.text = '分数：'+ score;
             }else{
@@ -175,16 +208,18 @@ onload = function () {
     var endState = function (game) {
         var button2,scoreText,titleTxt;
         this.preload = function () {
-            game.load.spritesheet('button2', './assets/button_sprite_sheet2.png', 210, 0);
+            game.load.spritesheet('button', './assets/button_sprite_sheet.png', 361, 118);
         };
         this.create = function(){
             //结语
-            titleTxt =  game.add.text(0 ,game.height/5,'游戏结束', { fontSize: fontSize*1.3+'px', fill: '#c00',boundsAlignH:'center' })
-            titleTxt.setTextBounds(0, 100, 800, 100);
+            titleTxt =  game.add.text(0 ,game.height/5,'Game Over!', { fontSize: fontSize*1.2+'px', fill: '#c00',boundsAlignH:'center' });
+            titleTxt.setTextBounds(0, 100, game.width, 100);
+
             scoreText = game.add.text(0 ,game.height/3,'我的战绩：'+score, { fontSize: '32px', fill: '#fff',boundsAlignH:'center' });
-            scoreText.setTextBounds(0, 100, 800, 100);
+            scoreText.setTextBounds(0, 100, game.width, 100);
+
             //重新开始
-            button2 = game.add.button(game.world.centerX - 95, game.height*0.75, 'button2', actionOnClick, this, 2, 1, 0);
+            button2 = game.add.button(game.world.centerX - 172, game.height*0.72, 'button', actionOnClick, this, 2, 1, 0);
             function actionOnClick () {
                 score = 0;
                 game.state.start('start');
