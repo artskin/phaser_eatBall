@@ -18,7 +18,7 @@ onload = function () {
             game.load.image("loading","./assets/loading.gif")
         };
         this.create =function(){
-            console.log("启动loading");
+            console.log("loading");
             var style = {font:"36px",fill:"#fff"};
             var gameTitle = game.add.text(0,game.height/3,'loading',style);
             gameTitle.x = (game.width - gameTitle.width)/2;
@@ -85,9 +85,12 @@ onload = function () {
 
         }
     };
-    var enemy,player,sBall,scoreText,ballNum;
+    var enemy,player,playerArea,sBall,scoreText,ballNum;
     var score = 0;
     var mainState = function (game) {
+        this.preload = function(){
+            game.load.image('playerArea', './assets/opa.png');
+        };
         this.addBall = function () {
             var colorObj = new RandomColor();
             var size = Math.floor(Math.random()*10 +1) * 5*DPR;
@@ -134,16 +137,65 @@ onload = function () {
             }
             //console.log(this.addBall());
 
+
+
+            playerArea = game.add.sprite(-game.width/2,-game.height/2, 'playerArea');
+            playerArea.width = game.width*2;
+            playerArea.height = game.height*2;
+
+
+
+
             //玩家设置
             var Shape = new ShapeBall("#ff5757","#aa0101",11*DPR);
+            console.log(Shape);
+            player = game.add.sprite(game.width/2 -Shape.width/2,game.height/2-Shape.height/2,Shape);
+            console.log(11*DPR,player.x,player.y);
 
-            //
-            player = game.add.sprite(game.width/2 -10,game.height/2-10,Shape);
-            console.log(11*DPR,player.width);
+
 
             //拖动设置
-            player.inputEnabled = true; //sprite to input
-            player.input.enableDrag(true); //input set drag
+
+
+
+            playerArea.inputEnabled = true; //sprite to input
+            //player.hitArea = new Phaser.Circle(game.width/2, game.height/2, 200);
+
+            playerArea.input.enableDrag(); //input set drag
+            //playerArea.hitArea =  new Phaser.Circle(game.width/2, game.height/2, 200);
+
+            //playerArea.events.onDragStart.add(dragStart);
+            playerArea.events.onDragUpdate.add(dragUpdate);
+            playerArea.events.onDragStop.add(dragStop);
+            var moveX,moveY;
+            function dragStart(e) {
+                 console.log("e:"+e.position);
+                 console.log("player:"+player.position);
+                return {
+                    moveX:e.position.x*DPR - player.position.x,
+                    moveY:e.position.y*DPR - player.position.y
+                };
+            }
+            function dragUpdate(e) {
+                console.log("距离："+dragStart(e).moveX);
+                // player.position.x = player.position.x + dragStart(e).moveX + 22+28*DPR;
+                // player.position.y = player.position.y + dragStart(e).moveY + 22+28*DPR;
+                // player.position.x = dragStart(e).moveX;
+                // player.position.y = dragStart(e).moveY;
+
+                player.position.x = e.position.x*DPR - player.position.x;
+                player.position.y = e.position.y*DPR - player.position.y;
+            }
+            function dragStop() {
+                // player.x = player.x;
+                // player.y = player.y;
+            }
+
+
+            //player.input.hitArea.width = 1000;
+            //console.log(player.hitArea);
+            // player.input.hitArea.height = 1000;
+
             //player.body.immovable = true;
             //player.body.collideWorldBounds = true;
             // var mX,mY;
@@ -166,12 +218,22 @@ onload = function () {
             //     player.y = e.targetTouches[0].clientX + mY;
             // };
 
-            game.physics.arcade.enable([enemy,player], Phaser.Physics.ARCADE);
+
+
+            // console.log(player);
+            // console.log((player.width-20)/DPR);
+            //player.scale.setTo(0.2,0.2);
+            // player.width = 40*DPR;
+            // player.height = 40*DPR;
+            //player.body.setSize(50, 50, 0, 0);
+            //player.body.immovable = true;
 
             //统计得分
             scoreText = game.add.text(24,24,'分数：0', { fontSize: '48px', fill: '#fff' });
 
-            game.time.events.loop(10000, this.addBall, this);
+            game.time.events.loop(2000, this.addBall, this);
+            //game.add.tween(player).to( { angle: 360 }, 2000, Phaser.Easing.Linear.None, true);
+            game.physics.arcade.enable([enemy,player], Phaser.Physics.ARCADE);
 
         };
 
@@ -181,9 +243,13 @@ onload = function () {
         };
         this.render = function(){
             //game.debug.pointer(game.input.mousePointer);
+            //game.debug.circle(player.hitArea);
+            // game.debug.spriteBounds(player);
+            // game.debug.spriteBounds(playerArea);
+            //game.debug.spriteBounds(playerArea.hitArea);
         };
         function collectStar(player,sBall) {
-            console.log(player.width,sBall.width);
+            console.log("玩家："+player.width,sBall.width);
             if(player.width>sBall.width){
                 sBall.kill();
                 if(player.width <82){
