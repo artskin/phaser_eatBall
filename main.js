@@ -257,11 +257,21 @@ onload = function () {
             game.load.spritesheet('button', './assets/button_sprite_sheet.png', 361, 118);
         };
         this.create = function(){
+
+            function toPercent(point){
+                var str=Number(point*100).toFixed(1);
+                str+="%";
+                return str;
+            }
+            var per = toPercent(score/200);
+
             //结语
             titleTxt =  game.add.text(0 ,game.height/5,'Game Over!', { fontSize: fontSize*1.2+'px', fill: '#c00',boundsAlignH:'center' });
             titleTxt.setTextBounds(0, 100, game.width, 100);
 
             scoreText = game.add.text(0 ,game.height/3,'我的战绩：'+score, { fontSize: '36px', fill: '#fff',boundsAlignH:'center' });
+            scoreText.setTextBounds(0, 100, game.width, 100);
+            scoreText = game.add.text(0 ,game.height/3+60,"击败了全国"+per+"的人", { fontSize: '36px', fill: '#fff',boundsAlignH:'center' });
             scoreText.setTextBounds(0, 100, game.width, 100);
 
             //重新开始
