@@ -96,6 +96,7 @@ onload = function () {
         this.addBall = function () {
             var colorObj = new RandomColor();
             var size = Math.floor(Math.random()*10 +1) * 5*DPR;
+
             if(size > 90){
                 size = size -80;
             }
@@ -118,9 +119,10 @@ onload = function () {
             sBall.body.collideWorldBounds = true;
             sBall.body.setCircle(size/2);
             sBall.body.bounce.set(1);
-            sBall.body.gravity.y = size/4;
-            sBall.body.velocity.set((140 - size/2)*DPR);
-            //console.log(size,);
+            sBall.body.gravity.set(0,10);
+            console.log((150 - size)*DPR,(100 - size)*DPR);
+            sBall.body.velocity.set((150 - size)*DPR,(100 - size)*DPR);
+            //sBall.body.angularVelocity = size;
             return ballNum = enemy.children.length
 
         };
@@ -134,7 +136,7 @@ onload = function () {
             enemy.enableBody = true;
             enemy.physicsBodyType = Phaser.Physics.ARCADE;
 
-            for(var c=0;c<4;c++) {
+            for(var c=0;c<5;c++) {
                 this.addBall();
             }
             //console.log(this.addBall());
@@ -157,10 +159,12 @@ onload = function () {
             //dragArea.events.onDragStop.add(dragStop);
 
             function dragStart(e) {
-                return {
-                    moveX:e.position.x*DPR - player.position.x,
-                    moveY:e.position.y*DPR - player.position.y
-                };
+                // return {
+                //     moveX:e.position.x*DPR - player.position.x,
+                //     moveY:e.position.y*DPR - player.position.y
+                // };
+                player.position.x = game.width/DPR + e.position.x +88*DPR*DPR;
+                player.position.y = game.height/DPR + e.position.y +161*DPR*DPR;
             }
             function dragUpdate(e) {
                 //console.log(player.position.x);
@@ -174,44 +178,10 @@ onload = function () {
 
             }
 
-            //player.input.hitArea.width = 1000;
-            //console.log(player.hitArea);
-            // player.input.hitArea.height = 1000;
-
-            //player.body.immovable = true;
-            //player.body.collideWorldBounds = true;
-            // var mX,mY;
-            // this.game.input.touch.onTouchStart = function (e) {
-            //
-            //     mX = e.targetTouches[0].clientX*DPR -player.x;
-            //     mY = e.targetTouches[0].clientY*DPR -player.y;
-            //
-            //     console.log(
-            //         "player.x:"+player.x,
-            //         "player.y:"+player.y,
-            //         "mouseX:"+e.targetTouches[0].clientX*DPR,
-            //         "mouseY:"+e.targetTouches[0].clientY*DPR,
-            //         mX,
-            //         mY);
-            // };
-            // this.game.input.touch.onTouchMove = function (e) {
-            //
-            //     player.x = e.targetTouches[0].clientX + mX;
-            //     player.y = e.targetTouches[0].clientX + mY;
-            // };
-
-            // console.log(player);
-            // console.log((player.width-20)/DPR);
-            //player.scale.setTo(0.2,0.2);
-            // player.width = 40*DPR;
-            // player.height = 40*DPR;
-            //player.body.setSize(50, 50, 0, 0);
-            //player.body.immovable = true;
-
             //统计得分
             scoreText = game.add.text(24,24,'分数：0', { fontSize: '36px', fill: '#fff' });
 
-            game.time.events.loop(3400/DPR, this.addBall, this);
+            game.time.events.loop(3000/DPR, this.addBall, this);
             //game.add.tween(player).to( { angle: 360 }, 2000, Phaser.Easing.Linear.None, true);
             game.physics.arcade.enable([enemy,player], Phaser.Physics.ARCADE);
 
@@ -224,23 +194,28 @@ onload = function () {
         this.render = function(){
             //game.debug.pointer(game.input.mousePointer);
             //game.debug.circle(player.hitArea);
-            // game.debug.spriteBounds(player);
-            // game.debug.spriteBounds(dragArea);
+            //game.debug.spriteBounds(player);
+            //game.debug.spriteBounds(dragArea);
             //game.debug.spriteBounds(playerArea.hitArea);
         };
         function collectStar(player,sBall) {
-            console.log("玩家："+player.width,sBall.width);
+            console.log("玩家:"+player.width,"敌人:"+sBall.width,60*DPR);
             if(player.width>sBall.width){
                 sBall.kill();
-                if(player.width <41*DPR){
+                if(player.width <40*DPR){
                     player.width+=6;
                     player.height+=6;
-                }else if(player.width < 60*DPR){
+                }else if(player.width < 50*DPR){
                     player.width+=4;
                     player.height+=4;
+                }else if(player.width < 80*DPR){
+                    player.width+=2;
+                    player.height+=2;
                 }else{
-
+                    alert("恭喜你过关");
+                    game.state.start('end');
                 }
+
                 score +=10;
                 scoreText.text = '分数：'+ score;
             }else{
@@ -260,6 +235,9 @@ onload = function () {
 
             function toPercent(point){
                 var str=Number(point*100).toFixed(1);
+                if (str>100){
+                    str = 100
+                }
                 str+="%";
                 return str;
             }
@@ -271,7 +249,7 @@ onload = function () {
 
             scoreText = game.add.text(0 ,game.height/3,'我的战绩：'+score, { fontSize: '36px', fill: '#fff',boundsAlignH:'center' });
             scoreText.setTextBounds(0, 100, game.width, 100);
-            scoreText = game.add.text(0 ,game.height/3+60,"击败了全国"+per+"的人", { fontSize: '36px', fill: '#fff',boundsAlignH:'center' });
+            scoreText = game.add.text(0 ,game.height/3+65,"击败了全国"+per+"的人", { fontSize: '36px', fill: '#fff',boundsAlignH:'center' });
             scoreText.setTextBounds(0, 100, game.width, 100);
 
             //重新开始
@@ -282,7 +260,6 @@ onload = function () {
             }
         };
     };
-
 
 
     game.state.add('boot',bootState);
