@@ -1,18 +1,23 @@
+/*
+ * @name: 大鱼吃小鱼
+ * @author: artskin(artskin@163.com)
+ * @date: 2018-3-20
+ *
+ */
+(function(){
+    var DPR = window.devicePixelRatio,
+        gameW = document.body.clientWidth *DPR,
+        gameH = document.body.clientHeight *DPR,
+        fontSize = 28*DPR;
 
-var DPR = window.devicePixelRatio;
-var gameW = document.body.clientWidth *DPR;
-var gameH = document.body.clientHeight *DPR;
+    var game = new Phaser.Game(gameW,gameH,Phaser.CANVAS,'game');
 
-var game = new Phaser.Game(gameW,gameH,Phaser.CANVAS,'game');
+    var loading,progress,timer,ball;
+    var enemy,player,dragArea,sBall,ballNum;
+    var button2,scoreText,titleTxt;
+    var score = 0;
+    console.log(game)
 
-var fontSize = 28*DPR;
-
-onload = function () {
-
-    var loading,
-        progress,
-        timer,
-        ball;
 
     //游戏加载
     var bootState = function (game) {
@@ -30,6 +35,7 @@ onload = function () {
             game.state.start('start');
         };
     };
+    console.log(bootState);
 
     //游戏开始画面
     var startState = function (game) {
@@ -76,7 +82,6 @@ onload = function () {
             function actionOnClick () {
                 game.state.start('main');
             }
-            //game.state.start('main');
 
         };
         this.update = function(){
@@ -87,8 +92,7 @@ onload = function () {
 
         }
     };
-    var enemy,player,dragArea,sBall,scoreText,ballNum;
-    var score = 0;
+
     var mainState = function (game) {
         this.preload = function(){
             game.load.image('playerArea', './assets/opa.png');
@@ -181,7 +185,7 @@ onload = function () {
             //统计得分
             scoreText = game.add.text(24,24,'分数：0', { fontSize: '36px', fill: '#fff' });
 
-            game.time.events.loop(2200/DPR, this.addBall, this);
+            game.time.events.loop(2000/DPR, this.addBall, this);
             //game.add.tween(player).to( { angle: 360 }, 2000, Phaser.Easing.Linear.None, true);
             game.physics.arcade.enable([enemy,player], Phaser.Physics.ARCADE);
 
@@ -227,7 +231,7 @@ onload = function () {
     };
 
     var endState = function (game) {
-        var button2,scoreText,titleTxt;
+
         this.preload = function () {
             game.load.spritesheet('button', './assets/button_sprite_sheet.png', 361, 118);
         };
@@ -267,12 +271,12 @@ onload = function () {
     game.state.add('main',mainState);
     game.state.add('end',endState);
 
-    //游戏
+    //游戏初始化
     game.state.start('boot');
 
+    //绘制球形
     function ShapeBall(color1,color2,size) {
         this.bmd = game.make.bitmapData(size*2, size*2);
-
         this.ballStyle = this.bmd.context.createRadialGradient(
             size*0.6,
             size*0.6,
@@ -283,13 +287,13 @@ onload = function () {
         );
         this.ballStyle.addColorStop(0, color1);
         this.ballStyle.addColorStop(1, color2);
-
         this.bmd.circle(size, size, size, this.ballStyle);
+
         return this.bmd;
     }
 
+    //生成随机颜色
     function RandomColor() {
-        //随机颜色
         this.highlight = 88;
         this.r=Math.floor(Math.random()*256);
         this.g=Math.floor(Math.random()*(256-this.highlight));
@@ -302,5 +306,6 @@ onload = function () {
         }
     }
 
+})();
 
-};
+
