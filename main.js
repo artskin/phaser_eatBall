@@ -232,10 +232,10 @@ onload = function () {
             console.log("玩家："+player.width,sBall.width);
             if(player.width>sBall.width){
                 sBall.kill();
-                if(player.width <82){
+                if(player.width <41*DPR){
                     player.width+=6;
                     player.height+=6;
-                }else if(player.width < 120){
+                }else if(player.width < 60*DPR){
                     player.width+=4;
                     player.height+=4;
                 }else{
