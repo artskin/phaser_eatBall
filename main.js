@@ -166,8 +166,8 @@ onload = function () {
                 //console.log(player.position.x);
                 // player.position.x = player.position.x/2+e.position.x/2 +88*DPR+game.width/4;
                 // player.position.y = player.position.y/2+e.position.y/2 +161*DPR+game.height/4;
-                player.position.x = game.width/2 + e.position.x +88*DPR*DPR;
-                player.position.y = game.height/2 + e.position.y +161*DPR*DPR;
+                player.position.x = game.width/DPR + e.position.x +88*DPR*DPR;
+                player.position.y = game.height/DPR + e.position.y +161*DPR*DPR;
             }
 
             function dragStop() {
