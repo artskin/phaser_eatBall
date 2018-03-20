@@ -96,8 +96,8 @@ onload = function () {
         this.addBall = function () {
             var colorObj = new RandomColor();
             var size = Math.floor(Math.random()*10 +1) * 5*DPR;
-            if(size > 89){
-                size = size -70;
+            if(size > 90){
+                size = size -80;
             }
 
             var circle = new ShapeBall(colorObj.color2,colorObj.color1,size);
