@@ -65,7 +65,7 @@ onload = function () {
                     y: game.height / 2 - 50*DPR,
                     radius: 1
                 },
-                2000,
+                1000,
                 Phaser.Easing.Bounce.Out,
                 true,
                 100 + 400 *2
@@ -96,7 +96,7 @@ onload = function () {
         this.addBall = function () {
             var colorObj = new RandomColor();
             var size = Math.floor(Math.random()*10 +1) * 5*DPR;
-            if(size > 99){
+            if(size > 89){
                 size = size -70;
             }
 
@@ -119,7 +119,7 @@ onload = function () {
             sBall.body.setCircle(size/2);
             sBall.body.bounce.set(1);
             sBall.body.gravity.y = size/4;
-            sBall.body.velocity.set((140 - size/2)*2);
+            sBall.body.velocity.set((140 - size/2)*DPR);
             //console.log(size,);
             return ballNum = enemy.children.length
 
@@ -142,8 +142,6 @@ onload = function () {
             //玩家设置
             var Shape = new ShapeBall("#ff5757","#aa0101",11*DPR);
             player = game.add.sprite(game.width/2 -Shape.width/2,game.height/2-Shape.height/2,Shape);
-            console.log(player);
-
 
             //拖动设置
             dragArea = game.add.sprite(-game.width/2,-game.height/2, 'playerArea');
@@ -157,7 +155,7 @@ onload = function () {
             dragArea.events.onDragStart.add(dragStart);
             dragArea.events.onDragUpdate.add(dragUpdate);
             //dragArea.events.onDragStop.add(dragStop);
-            var moveX,moveY;
+
             function dragStart(e) {
                 return {
                     moveX:e.position.x*DPR - player.position.x,
@@ -165,11 +163,11 @@ onload = function () {
                 };
             }
             function dragUpdate(e) {
-                console.log(player.position.x);
+                //console.log(player.position.x);
                 // player.position.x = player.position.x/2+e.position.x/2 +88*DPR+game.width/4;
                 // player.position.y = player.position.y/2+e.position.y/2 +161*DPR+game.height/4;
-                player.position.x = game.width/DPR+e.position.x +88*DPR*DPR;
-                player.position.y = game.height/DPR+e.position.y +161*DPR*DPR;
+                player.position.x = game.width/DPR + e.position.x +88*DPR*DPR;
+                player.position.y = game.height/DPR + e.position.y +161*DPR*DPR;
             }
 
             function dragStop() {
@@ -211,9 +209,9 @@ onload = function () {
             //player.body.immovable = true;
 
             //统计得分
-            scoreText = game.add.text(24,24,'分数：0', { fontSize: '48px', fill: '#fff' });
+            scoreText = game.add.text(24,24,'分数：0', { fontSize: '36px', fill: '#fff' });
 
-            game.time.events.loop(2000, this.addBall, this);
+            game.time.events.loop(2400/DPR, this.addBall, this);
             //game.add.tween(player).to( { angle: 360 }, 2000, Phaser.Easing.Linear.None, true);
             game.physics.arcade.enable([enemy,player], Phaser.Physics.ARCADE);
 
@@ -263,7 +261,7 @@ onload = function () {
             titleTxt =  game.add.text(0 ,game.height/5,'Game Over!', { fontSize: fontSize*1.2+'px', fill: '#c00',boundsAlignH:'center' });
             titleTxt.setTextBounds(0, 100, game.width, 100);
 
-            scoreText = game.add.text(0 ,game.height/3,'我的战绩：'+score, { fontSize: '32px', fill: '#fff',boundsAlignH:'center' });
+            scoreText = game.add.text(0 ,game.height/3,'我的战绩：'+score, { fontSize: '36px', fill: '#fff',boundsAlignH:'center' });
             scoreText.setTextBounds(0, 100, game.width, 100);
 
             //重新开始
