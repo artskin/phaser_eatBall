@@ -181,7 +181,7 @@ onload = function () {
             //统计得分
             scoreText = game.add.text(24,24,'分数：0', { fontSize: '36px', fill: '#fff' });
 
-            game.time.events.loop(2500/DPR, this.addBall, this);
+            game.time.events.loop(2200/DPR, this.addBall, this);
             //game.add.tween(player).to( { angle: 360 }, 2000, Phaser.Easing.Linear.None, true);
             game.physics.arcade.enable([enemy,player], Phaser.Physics.ARCADE);
 
