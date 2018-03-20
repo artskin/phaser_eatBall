@@ -2,7 +2,9 @@
 var DPR = window.devicePixelRatio;
 var gameW = document.body.clientWidth *DPR;
 var gameH = document.body.clientHeight *DPR;
+
 var game = new Phaser.Game(gameW,gameH,Phaser.CANVAS,'game');
+
 var fontSize = 28*DPR;
 
 onload = function () {
@@ -85,7 +87,7 @@ onload = function () {
 
         }
     };
-    var enemy,player,playerArea,sBall,scoreText,ballNum;
+    var enemy,player,dragArea,sBall,scoreText,ballNum;
     var score = 0;
     var mainState = function (game) {
         this.preload = function(){
@@ -125,7 +127,7 @@ onload = function () {
         this.create = function(){
             game.physics.startSystem(Phaser.Physics.ARCADE);
             //设置游戏标准重力为100
-            //game.physics.arcade.gravity.y = 98;
+            game.physics.arcade.gravity.y = 0;
             //game.enableBody = true;
 
             enemy = game.add.group();
@@ -137,60 +139,42 @@ onload = function () {
             }
             //console.log(this.addBall());
 
-
-
-            playerArea = game.add.sprite(-game.width/2,-game.height/2, 'playerArea');
-            playerArea.width = game.width*2;
-            playerArea.height = game.height*2;
-
-
-
-
             //玩家设置
             var Shape = new ShapeBall("#ff5757","#aa0101",11*DPR);
-            console.log(Shape);
             player = game.add.sprite(game.width/2 -Shape.width/2,game.height/2-Shape.height/2,Shape);
-            console.log(11*DPR,player.x,player.y);
-
+            console.log(player);
 
 
             //拖动设置
+            dragArea = game.add.sprite(-game.width/2,-game.height/2, 'playerArea');
+            //dragArea = game.add.sprite(0,0, 'playerArea');
+            dragArea.width = game.width*2;
+            dragArea.height = game.height*2;
+            dragArea.inputEnabled = true; //sprite to input
+            dragArea.input.enableDrag(); //input set drag
+            //dragArea.hitArea = new Phaser.Circle(game.width / 2, game.height / 2, 90); //input set drag
 
-
-
-            playerArea.inputEnabled = true; //sprite to input
-            //player.hitArea = new Phaser.Circle(game.width/2, game.height/2, 200);
-
-            playerArea.input.enableDrag(); //input set drag
-            //playerArea.hitArea =  new Phaser.Circle(game.width/2, game.height/2, 200);
-
-            //playerArea.events.onDragStart.add(dragStart);
-            playerArea.events.onDragUpdate.add(dragUpdate);
-            playerArea.events.onDragStop.add(dragStop);
+            dragArea.events.onDragStart.add(dragStart);
+            dragArea.events.onDragUpdate.add(dragUpdate);
+            //dragArea.events.onDragStop.add(dragStop);
             var moveX,moveY;
             function dragStart(e) {
-                 console.log("e:"+e.position);
-                 console.log("player:"+player.position);
                 return {
                     moveX:e.position.x*DPR - player.position.x,
                     moveY:e.position.y*DPR - player.position.y
                 };
             }
             function dragUpdate(e) {
-                console.log("距离："+dragStart(e).moveX);
-                // player.position.x = player.position.x + dragStart(e).moveX + 22+28*DPR;
-                // player.position.y = player.position.y + dragStart(e).moveY + 22+28*DPR;
-                // player.position.x = dragStart(e).moveX;
-                // player.position.y = dragStart(e).moveY;
-
-                player.position.x = e.position.x*DPR - player.position.x;
-                player.position.y = e.position.y*DPR - player.position.y;
+                console.log(player.position.x);
+                // player.position.x = player.position.x/2+e.position.x/2 +88*DPR+game.width/4;
+                // player.position.y = player.position.y/2+e.position.y/2 +161*DPR+game.height/4;
+                player.position.x = game.width/DPR+e.position.x +88*DPR*DPR;
+                player.position.y = game.height/DPR+e.position.y +161*DPR*DPR;
             }
+
             function dragStop() {
-                // player.x = player.x;
-                // player.y = player.y;
-            }
 
+            }
 
             //player.input.hitArea.width = 1000;
             //console.log(player.hitArea);
@@ -218,8 +202,6 @@ onload = function () {
             //     player.y = e.targetTouches[0].clientX + mY;
             // };
 
-
-
             // console.log(player);
             // console.log((player.width-20)/DPR);
             //player.scale.setTo(0.2,0.2);
@@ -245,7 +227,7 @@ onload = function () {
             //game.debug.pointer(game.input.mousePointer);
             //game.debug.circle(player.hitArea);
             // game.debug.spriteBounds(player);
-            // game.debug.spriteBounds(playerArea);
+            // game.debug.spriteBounds(dragArea);
             //game.debug.spriteBounds(playerArea.hitArea);
         };
         function collectStar(player,sBall) {
