@@ -74,7 +74,7 @@
                 game.sound.setDecodedCallback(['bgm','get','boom'],function () {
                     game.add.tween(progressBar).to({width:loading.width-10},600,null,true);
                     setTimeout(function () {
-                        //game.state.start('start');
+                        game.state.start('start');
                     }, 1200);
                 },this);
             });
