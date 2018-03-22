@@ -72,9 +72,9 @@
 
             game.load.onLoadComplete.add(function () {
                 game.sound.setDecodedCallback(['bgm','get','boom'],function () {
-                    game.add.tween(progressBar).to({width:304/unit},600,null,true);
+                    game.add.tween(progressBar).to({width:loading.width-10},600,null,true);
                     setTimeout(function () {
-                        game.state.start('start');
+                        //game.state.start('start');
                     }, 1200);
                 },this);
             });
@@ -88,8 +88,10 @@
 
             loading = game.add.sprite(gameW/2,gameH/2,"loading");
             loading.anchor.setTo(0.5, 0.5);
+            loading.scale.setTo(0.6*DPR);
+            console.log(loading.width);
 
-            progressBar = game.add.sprite(gameW/2 - 104, gameH/2, 'progressBar');
+            progressBar = game.add.sprite(gameW/2 - loading.width/2+6, gameH/2, 'progressBar');
             progressBar.anchor.set(0, 0.5);
             progressBar.width = 0/unit;
             progressBar.height = 20 / unit;
