@@ -66,12 +66,12 @@
             game.load.image('title', './assets/title.png');
             game.load.spritesheet('button', './assets/button_sprite_sheet.png', 361, 124);
             game.load.spritesheet('button2', './assets/button_sprite_sheet.png', 361, 118);
-            game.load.audio('bgm', './assets/audio/bgm.mp3', true);
+            //game.load.audio('bgm', './assets/audio/bgm.mp3', true);
             game.load.audio('get', './assets/audio/get.mp3', true);
-            game.load.audio('boom', './assets/audio/boom.mp3', true);
+            //game.load.audio('boom', './assets/audio/boom.mp3', true);
 
             game.load.onLoadComplete.add(function () {
-                game.sound.setDecodedCallback(['bgm','get','boom'],function () {
+                game.sound.setDecodedCallback(['get'],function () {
                     game.add.tween(progressBar).to({width:loading.width-10},600,null,true);
                     setTimeout(function () {
                         game.state.start('start');
