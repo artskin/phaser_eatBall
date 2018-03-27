@@ -259,7 +259,7 @@
             //得分
             scoreText = game.add.text(24,24,'分数：0', { fontSize: fontSize+'px', fill: '#fff' });
 
-            game.time.events.loop(1800/DPR, this.addBall, this);
+            game.time.events.loop(2800/DPR, this.addBall, this);
             game.physics.arcade.enable([enemy,player], Phaser.Physics.ARCADE);
             //game.add.tween(player).to( { angle: 360 }, 2000, Phaser.Easing.Linear.None, true);
         };
@@ -284,11 +284,11 @@
                 destroy.play();
                 sBall.kill();
                 if(player.width <40*DPR){
+                    player.width+=4;
+                    player.height+=4;
+                }else if(player.width < 50*DPR){
                     player.width+=3;
                     player.height+=3;
-                }else if(player.width < 50*DPR){
-                    player.width+=2;
-                    player.height+=2;
                 }else{
                     win.play();
                     alert("恭喜你过关");
