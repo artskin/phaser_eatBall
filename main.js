@@ -76,6 +76,9 @@
             game.load.onLoadComplete.add(function () {
                 game.sound.setDecodedCallback(['bgm','destroy','lose'],function () {
                     //game.add.tween(progressBar).to({width:loadW-10},600,null,true);
+                    // 音乐控制
+                    bgm = game.add.sound('bgm', 0.5, true);
+                    bgm.play();
                     setTimeout(function () {
                         game.state.start('start');
                     }, 1200);
@@ -103,6 +106,7 @@
     //游戏开始画面
     var startState = function (game) {
         this.create = function(){
+
             console.log("开始游戏");
             //游戏名称
             title = game.add.sprite(gameW/2,gameH/5-50,'title');
@@ -114,9 +118,7 @@
             gameTips.anchor.setTo(0.5, 0.5);
             gameTips.alpha =1;
 
-            // 音乐控制
-            bgm = game.add.sound('bgm', 0.5, true);
-            bgm.play();
+
 
             //启动动画
             var circle1 = new ShapeBall("#8ED6FF","#003BA2",60*DPR);
@@ -284,11 +286,11 @@
                 destroy.play();
                 sBall.kill();
                 if(player.width <40*DPR){
-                    player.width+=4;
-                    player.height+=4;
+                    player.width+=2*DPR;
+                    player.height+=2*DPR;
                 }else if(player.width < 50*DPR){
-                    player.width+=3;
-                    player.height+=3;
+                    player.width+=1*DPR;
+                    player.height+=31*DPR;
                 }else{
                     win.play();
                     alert("恭喜你过关");
