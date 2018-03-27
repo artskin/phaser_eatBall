@@ -2,8 +2,8 @@
  * @name: 大鱼吃小鱼
  * @author: 沐峰(artskin@163.com)
  * @date: 2018-3-20
- *
  */
+//进一法
 
 (function(){
     var DPR = window.devicePixelRatio,
@@ -13,11 +13,13 @@
 
     var game = new Phaser.Game(gameW,gameH,Phaser.CANVAS,'game');
 
-    var loading,progress,timer,ball;
-    var enemy,player,dragArea,sBall,ballNum;
-    var button2,scoreText,overTxt,progressBar;
+    var loading,loadW,progressBar;
+    var bgm,destroy,lose,win;
+    var overTxt,scoreText,title,resultInfo;
+    var enemy,player,dragArea,sBall,ball;
+    var button,button2;
     var score = 0;
-    var unit = 1080 / gameW;
+    var aspect = gameW / gameH;
 
     //绘制球形
     function ShapeBall(color1,color2,size) {
@@ -48,7 +50,7 @@
         return{
             color1:"#" + ((1 << 24) + (this.r << 16) + (this.g << 8) + this.b).toString(16).slice(1),
             color2:"#" + ((1 << 24) + (this.r << 16) + (this.g2 << 8) + this.b).toString(16).slice(1)
-        }
+        };
     }
 
     //游戏加载
@@ -66,13 +68,14 @@
             game.load.image('title', './assets/title.png');
             game.load.spritesheet('button', './assets/button_sprite_sheet.png', 361, 124);
             game.load.spritesheet('button2', './assets/button_sprite_sheet.png', 361, 118);
-            //game.load.audio('bgm', './assets/audio/bgm.mp3', true);
-            game.load.audio('get', './assets/audio/get.mp3', true);
-            //game.load.audio('boom', './assets/audio/boom.mp3', true);
+            game.load.audio('bgm', './assets/audio/bgm.mp3', true);
+            game.load.audio('destroy', './assets/audio/destroy.mp3', true);
+            game.load.audio('lose', './assets/audio/lose.mp3', true);
+            game.load.audio('win', 'assets/audio/win.mp3', true);
 
             game.load.onLoadComplete.add(function () {
-                game.sound.setDecodedCallback(['get'],function () {
-                    game.add.tween(progressBar).to({width:loading.width-10},600,null,true);
+                game.sound.setDecodedCallback(['bgm','destroy','lose'],function () {
+                    //game.add.tween(progressBar).to({width:loadW-10},600,null,true);
                     setTimeout(function () {
                         game.state.start('start');
                     }, 1200);
@@ -80,28 +83,25 @@
             });
         };
         this.create =function(){
+            loading = game.add.sprite(gameW/2,gameH/2,"loading");
+            loading.anchor.setTo(0.5, 0.5);
+            loading.scale.setTo(0.6*DPR);
+            loadW = loading.width;
 
             var loadStyle = {font:fontSize+"px",fill:"#fff"};
             var loadText = game.add.text(gameW/2,gameH/2-60,'loading',loadStyle);
             loadText.anchor.setTo(0.5, 0.5);
             loadText.alpha =0.6;
 
-            loading = game.add.sprite(gameW/2,gameH/2,"loading");
-            loading.anchor.setTo(0.5, 0.5);
-            loading.scale.setTo(0.6*DPR);
-            console.log(loading.width);
-
             progressBar = game.add.sprite(gameW/2 - loading.width/2+6, gameH/2, 'progressBar');
             progressBar.anchor.set(0, 0.5);
-            progressBar.width = 0/unit;
-            progressBar.height = 20 / unit;
+            progressBar.width = 0/aspect;
+            progressBar.height = 20 / aspect;
         };
     };
 
     //游戏开始画面
     var startState = function (game) {
-        var bmd,colors,rectangle,ball,getColor,innerCircle,outerCircle,rgb,button,title;
-
         this.create = function(){
             console.log("开始游戏");
             //游戏名称
@@ -113,6 +113,10 @@
             var gameTips = game.add.text(gameW/2,gameH-100,'小提示：吃掉比你小的球',style);
             gameTips.anchor.setTo(0.5, 0.5);
             gameTips.alpha =1;
+
+            // 音乐控制
+            bgm = game.add.sound('bgm', 0.5, true);
+            bgm.play();
 
             //启动动画
             var circle1 = new ShapeBall("#8ED6FF","#003BA2",60*DPR);
@@ -137,26 +141,21 @@
             button.anchor.setTo(0.5, 0.5);
             function actionOnClick () {
                 game.state.start('main');
+                bgm.stop();
             }
-
-        };
-        this.update = function(){
 
         };
         this.render = function () {
             //game.debug.geom(ball,'#cfffff');
-        }
+        };
     };
 
     var mainState = function (game) {
         this.addBall = function () {
+            //球的颜色
             var colorObj = new RandomColor();
-            var size = Math.floor(Math.random()*10 +1) * 5*DPR;
-            if(size > 90){
-                size = size -80;
-            }
-            var circle = new ShapeBall(colorObj.color2,colorObj.color1,size);
 
+            //球的位置
             var ballX = game.world.randomX,
                 ballY = game.world.randomY;
             if(ballX < gameW/2){
@@ -169,15 +168,48 @@
             }else{
                 ballY = ballY;
             }
-
+            //球的大小
+            function randomSize(level){
+                var randomNum = Math.floor(Math.random()*level +1);//1~10随机数
+                var size = randomNum * 5*DPR;
+                return size;
+            }
+            //当前场上球数据
+            var sizes = [];
+            for (var i=0;i<enemy.children.length;i++){
+                if(enemy.children[i].visible){
+                    sizes.push(enemy.children[i].width);
+                }
+            }
+            function compare(val1,val2){
+                return val1-val2;
+            }
+            function playerRank(arr,num){
+                for(var i=0;i<arr.length;i++){
+                    if(arr[i]>num){
+                        return i-1;
+                    }
+                }
+            }
+            
+            sizes.sort(compare);
+            var userRank=playerRank(sizes,player.width);
+            if(userRank < 1){
+                size = randomSize(Math.ceil(player.width/20))+1;
+                console.log(sizes,"新球:"+size);
+            }else{
+                size = randomSize(10);
+                console.log(sizes,"新球:"+size);
+            }
+            
+            //绘制球
+            var circle = new ShapeBall(colorObj.color2,colorObj.color1,size);
             sBall = enemy.create(ballX,ballY,circle);
             sBall.body.collideWorldBounds = true;
             sBall.body.setCircle(size/2);
             sBall.body.bounce.set(1);
             sBall.body.gravity.set(0,0);
             sBall.body.velocity.set((180 - size)*DPR,(140 - size)*DPR);
-            //sBall.body.angularVelocity = size;
-            return ballNum = enemy.children.length
 
         };
         this.create = function(){
@@ -190,18 +222,19 @@
             enemy.enableBody = true;
             enemy.physicsBodyType = Phaser.Physics.ARCADE;
 
+            //玩家设置
+            var Shape = new ShapeBall("#ff5757","#aa0101",10*DPR);
+            player = game.add.sprite(gameW/2,gameH/2,Shape);
+            player.anchor.setTo(0.5, 0.5);
+
             for(var c=0;c<4;c++) {
                 this.addBall();
             }
 
-            //玩家设置
-            var Shape = new ShapeBall("#ff5757","#aa0101",11*DPR);
-            player = game.add.sprite(gameW/2 -Shape.width/2,gameH/2-Shape.height/2,Shape);
-
             //拖动设置
-            dragArea = game.add.sprite(-gameW/2,-gameH/2, 'playerArea');
-            dragArea.width = gameW*2;
-            dragArea.height = gameH*2;
+            dragArea = game.add.sprite(-gameW,-gameH, 'playerArea');
+            dragArea.width = gameW*3;
+            dragArea.height = gameH*3;
             dragArea.inputEnabled = true; //sprite to input
             dragArea.input.enableDrag(); //input set drag
             //dragArea.hitArea = new Phaser.Circle(gameW / 2, gameH / 2, 90); //input set drag
@@ -212,26 +245,23 @@
 
             function dragStart(e) {
                 return {
-                    moveX:gameW/DPR + e.position.x +88*DPR*DPR,
-                    moveY:gameH/DPR + e.position.y +161*DPR*DPR
+                    moveX:gameW + e.position.x + gameW*aspect-51,
+                    moveY:gameH + e.position.y + gameH*aspect-83
                 };
             }
             function dragUpdate(e) {
                 player.position.x = dragStart(e).moveX;
                 player.position.y = dragStart(e).moveY;
             }
-
             function dragStop() {
 
             }
-
-            //统计得分
+            //得分
             scoreText = game.add.text(24,24,'分数：0', { fontSize: fontSize+'px', fill: '#fff' });
 
             game.time.events.loop(1800/DPR, this.addBall, this);
-            //game.add.tween(player).to( { angle: 360 }, 2000, Phaser.Easing.Linear.None, true);
             game.physics.arcade.enable([enemy,player], Phaser.Physics.ARCADE);
-
+            //game.add.tween(player).to( { angle: 360 }, 2000, Phaser.Easing.Linear.None, true);
         };
 
         this.update = function(){
@@ -241,24 +271,26 @@
         this.render = function(){
             //game.debug.pointer(game.input.mousePointer);
             //game.debug.circle(player.hitArea);
-            //game.debug.spriteBounds(player);
             //game.debug.spriteBounds(dragArea);
-            //game.debug.spriteBounds(playerArea.hitArea);
         };
         function collectStar(player,sBall) {
-            console.log("玩家:"+player.width,"敌人:"+sBall.width,60*DPR);
+            // 吃球
+            destroy = game.add.sound('destroy', 0.5, false);
+            win = game.add.sound('win', 0.5, false);
+            lose = game.add.sound('lose', 0.5, false);
+
+            //console.log("player:"+player.width+"--"+sBall.width);
             if(player.width>sBall.width){
+                destroy.play();
                 sBall.kill();
                 if(player.width <40*DPR){
-                    player.width+=6;
-                    player.height+=6;
+                    player.width+=3;
+                    player.height+=3;
                 }else if(player.width < 50*DPR){
-                    player.width+=4;
-                    player.height+=4;
-                }else if(player.width < 80*DPR){
                     player.width+=2;
                     player.height+=2;
                 }else{
+                    win.play();
                     alert("恭喜你过关");
                     game.state.start('end');
                 }
@@ -266,10 +298,13 @@
                 score +=10;
                 scoreText.text = '分数：'+ score;
             }else{
+                setTimeout(function(){
+                    lose.play()
+                },350);
                 console.log("游戏结束，你被吃掉了！");
                 game.state.start('end');
             }
-
+            return player.width;
         }
     };
 
@@ -278,21 +313,29 @@
             function toPercent(point){
                 var str=Number(point*100).toFixed(1);
                 if (str>100){
-                    str = 100
+                    str = 100;
                 }
                 str+="%";
                 return str;
             }
             var per = toPercent(score/412);
 
-            //结语
-            overTxt =  game.add.text(gameW/2 ,gameH/5,'Game Over!', { fontSize: fontSize*2+'px', fill: '#c00',boundsAlignH:'center' });
+            //本场成绩
+            overTxt =  game.add.text(gameW/2 ,gameH/5,'Game Over', { fontSize: fontSize*2+'px', fill: '#c00'});
             overTxt.anchor.setTo(0.5, 0.5);
 
-            scoreText = game.add.text(gameW/2 ,gameH/3,'我的战绩：'+score, { fontSize: fontSize+'px', fill: '#fff',boundsAlignH:'center' });
-            scoreText.anchor.setTo(0.5, 0.5);
-            scoreText = game.add.text(gameW/2 ,gameH/3+fontSize+30,"击败了全国"+per+"的选手", { fontSize: fontSize+'px', fill: '#fff',boundsAlignH:'center' });
-            scoreText.anchor.setTo(0.5, 0.5);
+            var resultTxt = '我的战绩：'+score+"\n\击败了全国"+per+"的选手";
+            var resultStyle = {
+                fontSize: fontSize+'px',
+                fill: '#fff',
+                wordWrap: true,
+                wordWrapWidth: 60,
+                align:'center',
+                boundsAlignH:'center',
+                boundsAlignV:"middle"
+            };
+            resultInfo = game.add.text(gameW/2,gameH/3,resultTxt,resultStyle);
+            resultInfo.anchor.setTo(0.5, 0.5);
 
             //重新开始
             button2 = game.add.button(gameW/2, gameH*0.72, 'button2', actionOnClick, this, 2, 1, 0);
@@ -301,6 +344,9 @@
                 score = 0;
                 game.state.start('start');
             }
+        };
+        this.render = function(){
+
         };
     };
 
