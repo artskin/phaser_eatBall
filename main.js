@@ -9,6 +9,7 @@
         gameW = document.body.clientWidth * DPR,
         gameH = document.body.clientHeight * DPR,
         fontSize = 16*DPR;
+    var topBar = window.screen.height - document.body.clientHeight;
 
     var game = new Phaser.Game(gameW,gameH,Phaser.CANVAS,'game');
 
@@ -98,9 +99,12 @@
             bgm.play();
 
             //游戏名称
-            var titleStyle = {font: "bold "+fontSize*2+"px Simsun",fill:"#fff"};
-            gameTitle = game.add.text(gameW/2,gameH/5,'大球吃小球',titleStyle);
-            gameTitle.anchor.setTo(0.5, 0.5);
+            if(topBar > 0){
+                var titleStyle = {font: "bold "+fontSize*2+"px Simsun",fill:"#fff"};
+                gameTitle = game.add.text(gameW/2,gameH/5,'大球吃小球',titleStyle);
+                gameTitle.anchor.setTo(0.5, 0.5);
+
+            }
 
             var tipStyle = {font:fontSize/2+"px",fill:"#394e76"};
             gameTips = game.add.text(gameW/2,gameH-100,'小提示：吃掉比你小的球',tipStyle);
