@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 	<meta charset='utf-8' />
-	<title>大鱼吃小鱼</title>
+	<title>大球吃小球</title>
 	<meta name='viewport' content='width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no'
 	/>
 	<meta name="renderer" content="webkit"/>
@@ -14,7 +14,8 @@
 	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"/>
 	<meta http-equiv='expires' content='0' />
 	<meta http-equiv="Cache-Control" content="no-siteapp"/>
-	<meta name=keywords content=phaser,h5游戏,弱肉强食>
+	<link rel="shortcut icon" href="./assets/favicon.png" />
+	<meta name=keywords content=phaser,h5游戏,大球吃小球,大鱼吃小鱼,弱肉强食>
 	<meta name=description content=吃掉比你小的球，你能吃掉多少。>
 	<style>
 		html,body{
@@ -29,10 +30,12 @@
 		#container canvas{
 			margin: 4% auto;
 		}
+		.hide{display: none;}
 	</style>
 	<script src="https://cdn.bootcss.com/phaser/2.6.2/phaser.min.js"></script>
 </head>
 <body>
+	<div class="hide"><img src="./assets/ball.png" alt="大球吃小球"></div>
 	<div id="container"></div>
 	<script src="./main.js"></script>
 </body>

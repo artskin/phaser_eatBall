@@ -96,13 +96,14 @@
             console.log("开始游戏");
             bgm = game.add.sound('bgm', 0.5, true);
             bgm.play();
-            //游戏名称
-            gameTitle = game.add.sprite(gameW/2,gameH/5-50,'title');
-            gameTitle.anchor.setTo(0.5, 0.5);
-            gameTitle.scale.setTo(0.3*DPR);
 
-            var style = {font:fontSize/2+"px",fill:"#394e76"};
-            gameTips = game.add.text(gameW/2,gameH-100,'小提示：吃掉比你小的球',style);
+            //游戏名称
+            var titleStyle = {font: "bold "+fontSize*2+"px Simsun",fill:"#fff"};
+            gameTitle = game.add.text(gameW/2,gameH/5,'大球吃小球',titleStyle);
+            gameTitle.anchor.setTo(0.5, 0.5);
+
+            var tipStyle = {font:fontSize/2+"px",fill:"#394e76"};
+            gameTips = game.add.text(gameW/2,gameH-100,'小提示：吃掉比你小的球',tipStyle);
             gameTips.anchor.setTo(0.5, 0.5);
             gameTips.alpha =1;
 
@@ -125,7 +126,7 @@
             );
 
             //开始按钮
-            button = game.add.button(gameW/2, gameH*0.72, 'button', actionOnClick, this, 2, 1, 0);
+            button = game.add.button(gameW/2, gameH*0.78, 'button', actionOnClick, this, 2, 1, 0);
             button.anchor.setTo(0.5, 0.5);
             function actionOnClick () {
                 game.state.start('main');
@@ -187,6 +188,7 @@
             }else{
                 size = randomSize(10);
             }
+            console.log(sizes);
             
             //绘制球
             var circle = new ShapeBall(colorObj.color2,colorObj.color1,size);
@@ -309,7 +311,7 @@
             overTxt =  game.add.text(gameW/2 ,gameH/5,'Game Over', { fontSize: fontSize*2+'px', fill: '#c00'});
             overTxt.anchor.setTo(0.5, 0.5);
 
-            var resultTxt = '我的战绩：'+score+"\n\击败了全国"+per+"的选手";
+            var resultTxt = '我的战绩：'+score+"\n击败了全国"+per+"的选手";
             var resultStyle = {
                 fontSize: fontSize+'px',
                 fill: '#fff',
