@@ -99,7 +99,8 @@
             bgm.play();
 
             //游戏名称
-            if(topBar > 0){
+            console.log(topBar);
+            if(topBar == 0){
                 var titleStyle = {font: "bold "+fontSize*2+"px Simsun",fill:"#fff"};
                 gameTitle = game.add.text(gameW/2,gameH/5,'大球吃小球',titleStyle);
                 gameTitle.anchor.setTo(0.5, 0.5);
