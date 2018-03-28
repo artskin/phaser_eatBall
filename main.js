@@ -244,7 +244,7 @@
             //得分
             scoreText = game.add.text(24,24,'分数：0', { fontSize: fontSize+'px', fill: '#fff' });
 
-            game.time.events.loop(3000/DPR, this.addBall, this);
+            game.time.events.loop(2800/DPR, this.addBall, this);
             game.physics.arcade.enable([enemy,player], Phaser.Physics.ARCADE);
             //game.add.tween(player).to( { angle: 360 }, 2000, Phaser.Easing.Linear.None, true);
         };
@@ -266,6 +266,9 @@
 
             // 吃球
             if(player.width>sBall.width){
+                score +=5;
+                scoreText.text = '分数：'+ score;
+
                 destroy.play();
                 sBall.kill();
                 if(player.width <40*DPR){
@@ -279,9 +282,6 @@
                     alert("恭喜你过关，分享战绩");
                     game.state.start('start');
                 }
-
-                score +=5;
-                scoreText.text = '分数：'+ score;
             }else{
                 setTimeout(function(){
                     lose.play()
