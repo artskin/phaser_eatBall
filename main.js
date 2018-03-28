@@ -12,13 +12,27 @@
 
     var game = new Phaser.Game(gameW,gameH,Phaser.CANVAS,'game');
 
-    var loading,loadW,progressBar;
+    var loading,loadText;
     var bgm,destroy,lose,win;
-    var gameTitle,scoreText,overTxt,resultInfo;
+    var gameTitle,gameTips,scoreText,overTxt,resultInfo;
     var enemy,player,dragArea,sBall,ball,size;
     var button,button2;
     var score = 0;
     var aspect = gameW / gameH;
+
+    //生成随机颜色
+    function RandomColor() {
+        this.highlight = 88;
+        this.r=Math.floor(Math.random()*256);
+        this.g=Math.floor(Math.random()*(256-this.highlight));
+        this.b=Math.floor(Math.random()*256);
+        this.g2 = this.g + this.highlight;
+        //所有方法的拼接都可以用ES6新特性`其他字符串{$变量名}`替换
+        return{
+            color1:"#" + ((1 << 24) + (this.r << 16) + (this.g << 8) + this.b).toString(16).slice(1),
+            color2:"#" + ((1 << 24) + (this.r << 16) + (this.g2 << 8) + this.b).toString(16).slice(1)
+        };
+    }
 
     //绘制球形
     function ShapeBall(color1,color2,size) {
@@ -38,32 +52,22 @@
         return this.bmd;
     }
 
-    //生成随机颜色
-    function RandomColor() {
-        this.highlight = 88;
-        this.r=Math.floor(Math.random()*256);
-        this.g=Math.floor(Math.random()*(256-this.highlight));
-        this.b=Math.floor(Math.random()*256);
-        this.g2 = this.g + this.highlight;
-        //所有方法的拼接都可以用ES6新特性`其他字符串{$变量名}`替换
-        return{
-            color1:"#" + ((1 << 24) + (this.r << 16) + (this.g << 8) + this.b).toString(16).slice(1),
-            color2:"#" + ((1 << 24) + (this.r << 16) + (this.g2 << 8) + this.b).toString(16).slice(1)
-        };
-    }
-
     //游戏加载
     var bootState = function (game) {
         this.init = function () {
             //缩放设置
             game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
             game.stage.backgroundColor = "#1b2436";
+            //loading文字
+            var loadStyle = {font:fontSize+"px",fill:"#fff"};
+            loadText = game.add.text(gameW/2,gameH/2-60,'游戏加中...',loadStyle);
+            loadText.anchor.setTo(0.5, 0.5);
+            loadText.alpha =0.6;
         };
         this.preload = function(){
             //资源加载
             game.load.image('playerArea', './assets/opa.png');
             game.load.image("loading","./assets/loading.gif");
-            game.load.image('progressBar', './assets/progressBar.png');
             game.load.image('title', './assets/title.png');
             game.load.spritesheet('button', './assets/button_sprite_sheet.png', 361, 124);
             game.load.spritesheet('button2', './assets/button_sprite_sheet.png', 361, 118);
@@ -72,33 +76,17 @@
             game.load.audio('lose', './assets/audio/lose.mp3', true);
             game.load.audio('win', 'assets/audio/win.mp3', true);
 
-            game.load.onLoadComplete.add(function () {
-                game.sound.setDecodedCallback(['bgm','destroy','lose'],function () {
-                    //game.add.tween(progressBar).to({width:loadW-10},600,null,true);
-                    setTimeout(function () {
-                        game.state.start('start');
-                        // 背景音乐
-                        bgm = game.add.sound('bgm', 0.5, true);
-                        bgm.play();
-                    }, 1000);
-                },this);
+            game.load.onFileComplete.add(function(progress) {
+                loadText.text ='游戏加中...' + progress + '%';
+                if(progress == 100) {
+                    game.state.start('start');
+                }
             });
         };
         this.create =function(){
             loading = game.add.sprite(gameW/2,gameH/2,"loading");
             loading.anchor.setTo(0.5, 0.5);
             loading.scale.setTo(0.6*DPR);
-            loadW = loading.width;
-
-            var loadStyle = {font:fontSize+"px",fill:"#fff"};
-            var loadText = game.add.text(gameW/2,gameH/2-60,'loading',loadStyle);
-            loadText.anchor.setTo(0.5, 0.5);
-            loadText.alpha =0.6;
-
-            progressBar = game.add.sprite(gameW/2 - loading.width/2+6, gameH/2, 'progressBar');
-            progressBar.anchor.set(0, 0.5);
-            progressBar.width = 0/aspect;
-            progressBar.height = 20 / aspect;
         };
     };
 
@@ -106,13 +94,15 @@
     var startState = function (game) {
         this.create = function(){
             console.log("开始游戏");
+            bgm = game.add.sound('bgm', 0.5, true);
+            bgm.play();
             //游戏名称
             gameTitle = game.add.sprite(gameW/2,gameH/5-50,'title');
             gameTitle.anchor.setTo(0.5, 0.5);
             gameTitle.scale.setTo(0.3*DPR);
 
             var style = {font:fontSize/2+"px",fill:"#394e76"};
-            var gameTips = game.add.text(gameW/2,gameH-100,'小提示：吃掉比你小的球',style);
+            gameTips = game.add.text(gameW/2,gameH-100,'小提示：吃掉比你小的球',style);
             gameTips.anchor.setTo(0.5, 0.5);
             gameTips.alpha =1;
 
@@ -194,10 +184,8 @@
             var userRank=playerRank(sizes,player.width);
             if(userRank < 1){
                 size = randomSize(Math.ceil(player.width/20));
-                console.log(sizes,"新球:"+size);
             }else{
                 size = randomSize(10);
-                console.log(sizes,"新球:"+size);
             }
             
             //绘制球
@@ -208,7 +196,6 @@
             sBall.body.bounce.set(1);
             sBall.body.gravity.set(0,0);
             sBall.body.velocity.set((180 - size)*DPR,(140 - size)*DPR);
-
         };
         this.create = function(){
             game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -289,8 +276,8 @@
                     player.height+=1.23*DPR;
                 }else{
                     win.play();
-                    alert("恭喜你过关");
-                    game.state.start('end');
+                    alert("恭喜你过关，分享战绩");
+                    game.state.start('start');
                 }
 
                 score +=5;
@@ -355,7 +342,4 @@
 
     //游戏初始化
     game.state.start('boot');
-
 })();
-
-
