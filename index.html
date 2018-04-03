@@ -23,19 +23,15 @@
 			margin: 0;
 			padding: 0;
 			color: #fff;
-			background:#140e22 url("./src/assets/bg.png") no-repeat;
+			background:#373d41 url("./src/assets/bg.png") no-repeat;
 			background-position:center top;
 			background-size: 100% 
 		}
-		.wrap{padding: 60px 15px;text-align: center}
-		.logo{text-align: center;padding: 40px;}
-		h1{font-size: 26px;font-weight: normal;text-align: center}
-		#container{
-			overflow: hidden;
-		}
-		#container canvas{
-			margin: 4% auto;
-		}
+		ul,li{padding: 0;margin: 0;list-style: none;}
+		a{color:rgb(210, 169, 248);text-decoration: none;}
+		.wrap{padding: 15px;text-align: center}
+		.logo{text-align: center;padding: 60px 15px 30px;}
+		.h1{font-size: 26px;font-weight: normal;text-align: center}
 		.btn{
 			background: -webkit-linear-gradient(left top, #4FC1E9, #0BD07A);
 			/* Safari 5.1 - 6.0 */
@@ -47,17 +43,17 @@
 			/* 标准的语法 */
 			color: #ffffff;
 		}
-		a{color:rgb(210, 169, 248);text-decoration: none;}
-		.hide{display: none;}
-		ul,li{padding: 0;margin: 0;list-style: none;}
 		.gamelist{padding: 30px;}
-		.gamelist a{display: block;padding: 15px 30px;border-radius: 5px;}
+		.gamelist a{display: block;padding: 15px 30px;border-radius: 50px;}
+		.hide{display: none;}
+		
+		
 	</style>
 </head>
 <body>
 	<div class="wrap">
-		<div class="logo"><img src="./src/assets/logo.png" width="100" alt="phaser logo"></div>
-		<h1>phaser引擎实战</h1>
+		<div class="logo"><img src="./src/assets/logo.png?v=1.0" width="42%" alt="phaser logo"></div>
+		<h1 class="h1">phaser引擎实战</h1>
 		<p class="hide">h5游戏学习</p>
 		<ul class="gamelist">
 			<a class="btn" href="./src/index.html">大鱼吃小鱼</a>
