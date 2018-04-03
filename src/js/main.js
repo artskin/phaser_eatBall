@@ -8,19 +8,19 @@
     var DPR = window.devicePixelRatio,
         gameW = document.body.clientWidth * DPR,
         gameH = document.body.clientHeight * DPR,
-        fontSize = 16*DPR;
+        fontSize = 16*DPR,
+        aspect = gameW / gameH;
     var topBar = window.screen.height - document.body.clientHeight;
 
     var game = new Phaser.Game(gameW,gameH,Phaser.CANVAS,'game');
-
+    
     var loading,loadText;
     var bgm,destroy,lose,win;
     var gameTitle,gameTips,scoreText,overTxt,resultInfo;
     var enemy,player,dragArea,sBall,ball,size;
     var button,button2;
     var score = 0;
-    var aspect = gameW / gameH;
-
+    
     //生成随机颜色
     function RandomColor() {
         this.highlight = 88;
@@ -99,12 +99,10 @@
             bgm.play();
 
             //游戏名称
-            console.log(topBar);
-            if(topBar == 0){
+            if(topBar < 30){
                 var titleStyle = {font: "bold "+fontSize*2+"px Simsun",fill:"#fff"};
                 gameTitle = game.add.text(gameW/2,gameH/5,'大球吃小球',titleStyle);
                 gameTitle.anchor.setTo(0.5, 0.5);
-
             }
 
             var tipStyle = {font:fontSize/2+"px",fill:"#394e76"};
@@ -150,17 +148,18 @@
             var colorObj = new RandomColor();
 
             //球的位置
+            var edge = 200;
             var ballX = game.world.randomX,
                 ballY = game.world.randomY;
             if(ballX < gameW/2){
-                ballX = -ballX-100;
+                ballX = -ballX-edge;
             }else{
-                ballX = ballX+gameW+100;
+                ballX = ballX+gameW+edge;
             }
             if(ballY < gameH/2){
-                ballY = -ballY-100;
+                ballY = -ballY-edge;
             }else{
-                ballY = ballY+100;
+                ballY = ballY+edge;
             }
             //球的大小
             function randomSize(level){
@@ -193,8 +192,6 @@
             }else{
                 size = randomSize(10);
             }
-            console.log(sizes);
-            
             //绘制球
             var circle = new ShapeBall(colorObj.color2,colorObj.color1,size);
             sBall = enemy.create(ballX,ballY,circle);
@@ -257,7 +254,6 @@
         };
 
         this.update = function(){
-            game.physics.arcade.collide(enemy, player);
             game.physics.arcade.overlap(enemy,player,collectStar,null,this);
         };
         this.render = function(){
