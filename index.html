@@ -34,15 +34,23 @@
 		#container canvas{
 			margin: 4% auto;
 		}
-		a{color: aqua;}
+		a{color:rgb(210, 169, 248);border-radius: 5px;}
 		.hide{display: none;}
+		ul,li{padding: 0;margin: 0;list-style: none;}
+		.gamelist{padding: 30px;}
+		.gamelist a{display: block;background: blueviolet;padding: 15px 30px;}
 	</style>
 </head>
 <body>
 	<div class="wrap">
-		<div class="logo"><img src="./src/assets/logo.png" width="90" alt="phaser logo"></div>
-		<h1>h5游戏学习实例</h1>
-		<p><a href="./src/index.html">大鱼吃小鱼</a></p>
+		<div class="logo"><img src="./src/assets/logo.png" width="100" alt="phaser logo"></div>
+		<h1>phaser引擎实战</h1>
+		<p class="hide">h5游戏学习</p>
+		<ul class="gamelist">
+			<a href="./src/index.html">大鱼吃小鱼</a>
+			<br>
+			<a href="javascript:">撞球</a>
+		</ul>
 	</div>
 </body>
 </html>
