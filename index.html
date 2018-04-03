@@ -25,7 +25,7 @@
 			color: #fff;
 			background: #373d41;
 		}
-		ul,li{padding: 0;margin: 0;list-style: none;}
+		ul,li,dl,dt,dd{padding: 0;margin: 0;list-style: none;}
 		a{color:rgb(210, 169, 248);text-decoration: none;}
 		.wrap{text-align: center;max-width: 600px;margin: 0 auto;height: 100%;
 			background:#373d41 url("./src/assets/bg.png") no-repeat;
@@ -43,6 +43,12 @@
 		}
 		.gamelist{padding: 30px;}
 		.gamelist a{display: block;padding: 15px 30px;border-radius: 50px;}
+		.game-dl{padding: 30px;text-align: left;}
+		.game-dl dl{height:88px;padding: 15px;position: relative;background: #303335;border-radius: 5px;}
+		.game-dl dt{width: 25%;position: absolute;}
+		.game-dl dd{width: 70%;padding-left: 32%;}
+		.game-dl dd h2{margin: 0;font-size: 16px;color: #0BD07A}
+		.game-dl dd p{font-size: 12px;margin: 10px 0;color: #ccc}
 		.info{text-align: right;color: #999;padding: 0 60px;font-size: 12px;}
 		.hide{display: none;}
 		@media screen and (min-width: 420px){
@@ -55,10 +61,21 @@
 		<div class="logo"><img src="./src/assets/logo.png?v=1.0" width="42%" alt="phaser logo"></div>
 		<h1 class="h1">phaser引擎实战</h1>
 		<p class="info">——by 沐峰</p>
+		<div class="game-dl">
+			<a href="./src/index.html">
+				<dl>
+					<dt><img width="100%" src="./src/assets/ball.png?v=1.0" alt="ball"></dt>
+					<dd>
+						<h2>大球吃小球</h2>
+						<p>
+							玩法：模仿大鱼吃小鱼，吃掉比自己小的球...
+						</p>
+					</dd>
+				</dl>
+			</a>
+		</div>
 		<ul class="gamelist">
-			<a class="btn" href="./src/index.html">大鱼吃小鱼</a>
-			<br>
-			<a class="btn" href="javascript:alert('微信小游戏开发中，敬请期待！')">撞球</a>
+			<a class="btn" href="javascript:alert('微信小游戏开发中，敬请期待！')">撞球开发中...</a>
 		</ul>
 	</div>
 </body>
