@@ -271,7 +271,6 @@
             if(player.width>sBall.width){
                 score +=5;
                 scoreText.text = '分数：'+ score;
-
                 destroy.play();
                 sBall.kill();
                 if(player.width <40*DPR){
@@ -284,6 +283,7 @@
                     win.play();
                     alert("恭喜你过关，分享战绩");
                     game.state.start('start');
+                    score =0;
                 }
             }else{
                 setTimeout(function(){
