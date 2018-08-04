@@ -59,6 +59,7 @@
             //缩放设置
             game.scale.scaleMode = Phaser.ScaleManager.EXACT_FIT;
             game.stage.backgroundColor = "#1b2436";
+            
             //loading文字
             var loadStyle = {font:fontSize+"px",fill:"#fff"};
             loadText = game.add.text(gameW/2,gameH/2-60,'游戏加中...',loadStyle);
@@ -69,7 +70,9 @@
             //资源加载
             game.load.image('playerArea', './assets/opa.png');
             game.load.image("loading","./assets/loading.gif");
+            game.load.image("loadbg","assets/loadbg.png");
             game.load.image('title', './assets/title.png');
+            game.load.image('btn_start', './assets/btn_start.png');
             game.load.spritesheet('button', './assets/button_sprite_sheet.png', 361, 124);
             game.load.spritesheet('button2', './assets/button_sprite_sheet.png', 361, 118);
             game.load.audio('bgm', './assets/audio/bgm.mp3', true);
@@ -98,11 +101,15 @@
             bgm = game.add.sound('bgm', 0.5, true);
             bgm.play();
 
+            game.bg = game.add.sprite(0, 0, 'loadbg');
+            game.bg.width = gameW;
+            game.bg.height= gameH;
+
             //游戏名称
             if(topBar < 30){
-                var titleStyle = {font: "bold "+fontSize*2+"px Simsun",fill:"#fff"};
-                gameTitle = game.add.text(gameW/2,gameH/5,'大球吃小球',titleStyle);
-                gameTitle.anchor.setTo(0.5, 0.5);
+                var titleStyle = {font: "bold "+fontSize*2+"px",fill:"#fff"};
+                // gameTitle = game.add.text(gameW/2,gameH/5,'大球吃小球',titleStyle);
+                // gameTitle.anchor.setTo(0.5, 0.5);
             }
 
             var tipStyle = {font:fontSize/2+"px",fill:"#394e76"};
@@ -129,8 +136,9 @@
             );
 
             //开始按钮
-            button = game.add.button(gameW/2, gameH*0.78, 'button', actionOnClick, this, 2, 1, 0);
+            button = game.add.button(gameW/2, gameH*0.78, 'btn_start', actionOnClick, this, 2, 1, 0);
             button.anchor.setTo(0.5, 0.5);
+            button.scale.setTo(0.5*DPR);
             function actionOnClick () {
                 game.state.start('main');
                 bgm.stop();
